@@ -10,12 +10,12 @@ public class PlayerController : PortalableObject
     {
         base.Awake();
 
-        cameraMove = GetComponent<CameraMove>();
+        this.cameraMove = this.GetComponent<CameraMove>();
     }
 
     public override void Warp()
     {
         base.Warp();
-        cameraMove.ResetTargetRotation();
+        this.cameraMove.ResetTargetRotation();
     }
 }

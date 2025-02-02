@@ -30,28 +30,28 @@ public class Portal : MonoBehaviour
 
     private void Awake()
     {
-        collider = GetComponent<BoxCollider>();
-        Renderer = GetComponent<Renderer>();
+        this.collider = this.GetComponent<BoxCollider>();
+        this.Renderer = this.GetComponent<Renderer>();
     }
 
     private void Start()
     {
-        outlineRenderer.material.SetColor("_OutlineColour", PortalColour);
-        
-        gameObject.SetActive(false);
+        this.outlineRenderer.material.SetColor("_OutlineColour", this.PortalColour);
+
+        this.gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        Renderer.enabled = OtherPortal.IsPlaced;
+        this.Renderer.enabled = this.OtherPortal.IsPlaced;
 
-        for (int i = 0; i < portalObjects.Count; ++i)
+        for (int i = 0; i < this.portalObjects.Count; ++i)
         {
-            Vector3 objPos = transform.InverseTransformPoint(portalObjects[i].transform.position);
+            Vector3 objPos = this.transform.InverseTransformPoint(this.portalObjects[i].transform.position);
 
             if (objPos.z > 0.0f)
             {
-                portalObjects[i].Warp();
+                this.portalObjects[i].Warp();
             }
         }
     }
@@ -61,8 +61,8 @@ public class Portal : MonoBehaviour
         var obj = other.GetComponent<PortalableObject>();
         if (obj != null)
         {
-            portalObjects.Add(obj);
-            obj.SetIsInPortal(this, OtherPortal, wallCollider);
+            this.portalObjects.Add(obj);
+            obj.SetIsInPortal(this, this.OtherPortal, this.wallCollider);
         }
     }
 
@@ -70,30 +70,30 @@ public class Portal : MonoBehaviour
     {
         var obj = other.GetComponent<PortalableObject>();
 
-        if(portalObjects.Contains(obj))
+        if(this.portalObjects.Contains(obj))
         {
-            portalObjects.Remove(obj);
-            obj.ExitPortal(wallCollider);
+            this.portalObjects.Remove(obj);
+            obj.ExitPortal(this.wallCollider);
         }
     }
 
     public bool PlacePortal(Collider wallCollider, Vector3 pos, Quaternion rot)
     {
-        testTransform.position = pos;
-        testTransform.rotation = rot;
-        testTransform.position -= testTransform.forward * 0.001f;
+        this.testTransform.position = pos;
+        this.testTransform.rotation = rot;
+        this.testTransform.position -= this.testTransform.forward * 0.001f;
 
-        FixOverhangs();
-        FixIntersects();
+        this.FixOverhangs();
+        this.FixIntersects();
 
-        if (CheckOverlap())
+        if (this.CheckOverlap())
         {
             this.wallCollider = wallCollider;
-            transform.position = testTransform.position;
-            transform.rotation = testTransform.rotation;
+            this.transform.position = this.testTransform.position;
+            this.transform.rotation = this.testTransform.rotation;
 
-            gameObject.SetActive(true);
-            IsPlaced = true;
+            this.gameObject.SetActive(true);
+            this.IsPlaced = true;
             return true;
         }
 
@@ -122,17 +122,17 @@ public class Portal : MonoBehaviour
         for(int i = 0; i < 4; ++i)
         {
             RaycastHit hit;
-            Vector3 raycastPos = testTransform.TransformPoint(testPoints[i]);
-            Vector3 raycastDir = testTransform.TransformDirection(testDirs[i]);
+            Vector3 raycastPos = this.testTransform.TransformPoint(testPoints[i]);
+            Vector3 raycastDir = this.testTransform.TransformDirection(testDirs[i]);
 
-            if(Physics.CheckSphere(raycastPos, 0.05f, placementMask))
+            if(Physics.CheckSphere(raycastPos, 0.05f, this.placementMask))
             {
                 break;
             }
-            else if(Physics.Raycast(raycastPos, raycastDir, out hit, 2.1f, placementMask))
+            else if(Physics.Raycast(raycastPos, raycastDir, out hit, 2.1f, this.placementMask))
             {
                 var offset = hit.point - raycastPos;
-                testTransform.Translate(offset, Space.World);
+                this.testTransform.Translate(offset, Space.World);
             }
         }
     }
@@ -153,14 +153,14 @@ public class Portal : MonoBehaviour
         for (int i = 0; i < 4; ++i)
         {
             RaycastHit hit;
-            Vector3 raycastPos = testTransform.TransformPoint(0.0f, 0.0f, -0.1f);
-            Vector3 raycastDir = testTransform.TransformDirection(testDirs[i]);
+            Vector3 raycastPos = this.testTransform.TransformPoint(0.0f, 0.0f, -0.1f);
+            Vector3 raycastDir = this.testTransform.TransformDirection(testDirs[i]);
 
-            if (Physics.Raycast(raycastPos, raycastDir, out hit, testDists[i], placementMask))
+            if (Physics.Raycast(raycastPos, raycastDir, out hit, testDists[i], this.placementMask))
             {
                 var offset = (hit.point - raycastPos);
                 var newOffset = -raycastDir * (testDists[i] - offset.magnitude);
-                testTransform.Translate(newOffset, Space.World);
+                this.testTransform.Translate(newOffset, Space.World);
             }
         }
     }
@@ -172,18 +172,11 @@ public class Portal : MonoBehaviour
 
         var checkPositions = new Vector3[]
         {
-            testTransform.position + testTransform.TransformVector(new Vector3( 0.0f,  0.0f, -0.1f)),
-
-            testTransform.position + testTransform.TransformVector(new Vector3(-1.0f, -2.0f, -0.1f)),
-            testTransform.position + testTransform.TransformVector(new Vector3(-1.0f,  2.0f, -0.1f)),
-            testTransform.position + testTransform.TransformVector(new Vector3( 1.0f, -2.0f, -0.1f)),
-            testTransform.position + testTransform.TransformVector(new Vector3( 1.0f,  2.0f, -0.1f)),
-
-            testTransform.TransformVector(new Vector3(0.0f, 0.0f, 0.2f))
+            this.testTransform.position + this.testTransform.TransformVector(new Vector3( 0.0f,  0.0f, -0.1f)), this.testTransform.position + this.testTransform.TransformVector(new Vector3(-1.0f, -2.0f, -0.1f)), this.testTransform.position + this.testTransform.TransformVector(new Vector3(-1.0f,  2.0f, -0.1f)), this.testTransform.position + this.testTransform.TransformVector(new Vector3( 1.0f, -2.0f, -0.1f)), this.testTransform.position + this.testTransform.TransformVector(new Vector3( 1.0f,  2.0f, -0.1f)), this.testTransform.TransformVector(new Vector3(0.0f, 0.0f, 0.2f))
         };
 
         // Ensure the portal does not intersect walls.
-        var intersections = Physics.OverlapBox(checkPositions[0], checkExtents, testTransform.rotation, placementMask);
+        var intersections = Physics.OverlapBox(checkPositions[0], checkExtents, this.testTransform.rotation, this.placementMask);
 
         if(intersections.Length > 1)
         {
@@ -192,7 +185,7 @@ public class Portal : MonoBehaviour
         else if(intersections.Length == 1) 
         {
             // We are allowed to intersect the old portal position.
-            if (intersections[0] != collider)
+            if (intersections[0] != this.collider)
             {
                 return false;
             }
@@ -204,7 +197,7 @@ public class Portal : MonoBehaviour
         for(int i = 1; i < checkPositions.Length - 1; ++i)
         {
             isOverlapping &= Physics.Linecast(checkPositions[i], 
-                checkPositions[i] + checkPositions[checkPositions.Length - 1], placementMask);
+                checkPositions[i] + checkPositions[checkPositions.Length - 1], this.placementMask);
         }
 
         return isOverlapping;
@@ -212,7 +205,7 @@ public class Portal : MonoBehaviour
 
     public void RemovePortal()
     {
-        gameObject.SetActive(false);
-        IsPlaced = false;
+        this.gameObject.SetActive(false);
+        this.IsPlaced = false;
     }
 }

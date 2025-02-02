@@ -18,25 +18,25 @@ public class PortalPlacement : MonoBehaviour
 
     private void Awake()
     {
-        cameraMove = GetComponent<CameraMove>();
+        this.cameraMove = this.GetComponent<CameraMove>();
     }
 
     private void Update()
     {
         if(Input.GetButtonDown("Fire1"))
         {
-            FirePortal(0, transform.position, transform.forward, 250.0f);
+            this.FirePortal(0, this.transform.position, this.transform.forward, 250.0f);
         }
         else if (Input.GetButtonDown("Fire2"))
         {
-            FirePortal(1, transform.position, transform.forward, 250.0f);
+            this.FirePortal(1, this.transform.position, this.transform.forward, 250.0f);
         }
     }
 
     private void FirePortal(int portalID, Vector3 pos, Vector3 dir, float distance)
     {
         RaycastHit hit;
-        Physics.Raycast(pos, dir, out hit, distance, layerMask);
+        Physics.Raycast(pos, dir, out hit, distance, this.layerMask);
 
         if(hit.collider != null)
         {
@@ -64,13 +64,13 @@ public class PortalPlacement : MonoBehaviour
 
                 distance -= Vector3.Distance(pos, hit.point);
 
-                FirePortal(portalID, pos, dir, distance);
+                this.FirePortal(portalID, pos, dir, distance);
 
                 return;
             }
 
             // Orient the portal according to camera look direction and surface direction.
-            var cameraRotation = cameraMove.TargetRotation;
+            var cameraRotation = this.cameraMove.TargetRotation;
             var portalRight = cameraRotation * Vector3.right;
             
             if(Mathf.Abs(portalRight.x) >= Mathf.Abs(portalRight.z))
@@ -88,11 +88,11 @@ public class PortalPlacement : MonoBehaviour
             var portalRotation = Quaternion.LookRotation(portalForward, portalUp);
             
             // Attempt to place the portal.
-            bool wasPlaced = portals.Portals[portalID].PlacePortal(hit.collider, hit.point, portalRotation);
+            bool wasPlaced = this.portals.Portals[portalID].PlacePortal(hit.collider, hit.point, portalRotation);
 
             if(wasPlaced)
             {
-                crosshair.SetPortalPlaced(portalID, true);
+                this.crosshair.SetPortalPlaced(portalID, true);
             }
         }
     }

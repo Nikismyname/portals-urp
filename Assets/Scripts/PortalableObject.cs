@@ -22,44 +22,44 @@ public class PortalableObject : MonoBehaviour
 
     protected virtual void Awake()
     {
-        cloneObject = new GameObject();
-        cloneObject.SetActive(false);
-        var meshFilter = cloneObject.AddComponent<MeshFilter>();
-        var meshRenderer = cloneObject.AddComponent<MeshRenderer>();
+        this.cloneObject = new GameObject();
+        this.cloneObject.SetActive(false);
+        var meshFilter = this.cloneObject.AddComponent<MeshFilter>();
+        var meshRenderer = this.cloneObject.AddComponent<MeshRenderer>();
 
-        meshFilter.mesh = GetComponent<MeshFilter>().mesh;
-        meshRenderer.materials = GetComponent<MeshRenderer>().materials;
-        cloneObject.transform.localScale = transform.localScale;
+        meshFilter.mesh = this.GetComponent<MeshFilter>().mesh;
+        meshRenderer.materials = this.GetComponent<MeshRenderer>().materials;
+        this.cloneObject.transform.localScale = this.transform.localScale;
 
-        rigidbody = GetComponent<Rigidbody>();
-        collider = GetComponent<Collider>();
+        this.rigidbody = this.GetComponent<Rigidbody>();
+        this.collider = this.GetComponent<Collider>();
     }
 
     private void LateUpdate()
     {
-        if(inPortal == null || outPortal == null)
+        if(this.inPortal == null || this.outPortal == null)
         {
             return;
         }
 
-        if(cloneObject.activeSelf && inPortal.IsPlaced && outPortal.IsPlaced)
+        if(this.cloneObject.activeSelf && this.inPortal.IsPlaced && this.outPortal.IsPlaced)
         {
-            var inTransform = inPortal.transform;
-            var outTransform = outPortal.transform;
+            var inTransform = this.inPortal.transform;
+            var outTransform = this.outPortal.transform;
 
             // Update position of clone.
-            Vector3 relativePos = inTransform.InverseTransformPoint(transform.position);
+            Vector3 relativePos = inTransform.InverseTransformPoint(this.transform.position);
             relativePos = halfTurn * relativePos;
-            cloneObject.transform.position = outTransform.TransformPoint(relativePos);
+            this.cloneObject.transform.position = outTransform.TransformPoint(relativePos);
 
             // Update rotation of clone.
-            Quaternion relativeRot = Quaternion.Inverse(inTransform.rotation) * transform.rotation;
+            Quaternion relativeRot = Quaternion.Inverse(inTransform.rotation) * this.transform.rotation;
             relativeRot = halfTurn * relativeRot;
-            cloneObject.transform.rotation = outTransform.rotation * relativeRot;
+            this.cloneObject.transform.rotation = outTransform.rotation * relativeRot;
         }
         else
         {
-            cloneObject.transform.position = new Vector3(-1000.0f, 1000.0f, -1000.0f);
+            this.cloneObject.transform.position = new Vector3(-1000.0f, 1000.0f, -1000.0f);
         }
     }
 
@@ -68,47 +68,47 @@ public class PortalableObject : MonoBehaviour
         this.inPortal = inPortal;
         this.outPortal = outPortal;
 
-        Physics.IgnoreCollision(collider, wallCollider);
+        Physics.IgnoreCollision(this.collider, wallCollider);
 
-        cloneObject.SetActive(false);
+        this.cloneObject.SetActive(false);
 
-        ++inPortalCount;
+        ++this.inPortalCount;
     }
 
     public void ExitPortal(Collider wallCollider)
     {
-        Physics.IgnoreCollision(collider, wallCollider, false);
-        --inPortalCount;
+        Physics.IgnoreCollision(this.collider, wallCollider, false);
+        --this.inPortalCount;
 
-        if (inPortalCount == 0)
+        if (this.inPortalCount == 0)
         {
-            cloneObject.SetActive(false);
+            this.cloneObject.SetActive(false);
         }
     }
 
     public virtual void Warp()
     {
-        var inTransform = inPortal.transform;
-        var outTransform = outPortal.transform;
+        var inTransform = this.inPortal.transform;
+        var outTransform = this.outPortal.transform;
 
         // Update position of object.
-        Vector3 relativePos = inTransform.InverseTransformPoint(transform.position);
+        Vector3 relativePos = inTransform.InverseTransformPoint(this.transform.position);
         relativePos = halfTurn * relativePos;
-        transform.position = outTransform.TransformPoint(relativePos);
+        this.transform.position = outTransform.TransformPoint(relativePos);
 
         // Update rotation of object.
-        Quaternion relativeRot = Quaternion.Inverse(inTransform.rotation) * transform.rotation;
+        Quaternion relativeRot = Quaternion.Inverse(inTransform.rotation) * this.transform.rotation;
         relativeRot = halfTurn * relativeRot;
-        transform.rotation = outTransform.rotation * relativeRot;
+        this.transform.rotation = outTransform.rotation * relativeRot;
 
         // Update velocity of rigidbody.
-        Vector3 relativeVel = inTransform.InverseTransformDirection(rigidbody.linearVelocity);
+        Vector3 relativeVel = inTransform.InverseTransformDirection(this.rigidbody.linearVelocity);
         relativeVel = halfTurn * relativeVel;
-        rigidbody.linearVelocity = outTransform.TransformDirection(relativeVel);
+        this.rigidbody.linearVelocity = outTransform.TransformDirection(relativeVel);
 
         // Swap portal references.
-        var tmp = inPortal;
-        inPortal = outPortal;
-        outPortal = tmp;
+        var tmp = this.inPortal;
+        this.inPortal = this.outPortal;
+        this.outPortal = tmp;
     }
 }

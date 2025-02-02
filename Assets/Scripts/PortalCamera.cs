@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using RenderPipeline = UnityEngine.Rendering.RenderPipelineManager;
@@ -23,50 +21,50 @@ public class PortalCamera : MonoBehaviour
 
     private void Awake()
     {
-        mainCamera = GetComponent<Camera>();
+        this.mainCamera = this.GetComponent<Camera>();
 
-        tempTexture1 = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);
-        tempTexture2 = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);
+        this.tempTexture1 = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);
+        this.tempTexture2 = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);
     }
 
     private void Start()
     {
-        portals[0].Renderer.material.mainTexture = tempTexture1;
-        portals[1].Renderer.material.mainTexture = tempTexture2;
+        this.portals[0].Renderer.material.mainTexture = this.tempTexture1;
+        this.portals[1].Renderer.material.mainTexture = this.tempTexture2;
     }
 
     private void OnEnable()
     {
-        RenderPipeline.beginCameraRendering += UpdateCamera;
+        RenderPipeline.beginCameraRendering += this.UpdateCamera;
     }
 
     private void OnDisable()
     {
-        RenderPipeline.beginCameraRendering -= UpdateCamera;
+        RenderPipeline.beginCameraRendering -= this.UpdateCamera;
     }
 
     void UpdateCamera(ScriptableRenderContext SRC, Camera camera)
     {
-        if (!portals[0].IsPlaced || !portals[1].IsPlaced)
+        if (!this.portals[0].IsPlaced || !this.portals[1].IsPlaced)
         {
             return;
         }
 
-        if (portals[0].Renderer.isVisible)
+        if (this.portals[0].Renderer.isVisible)
         {
-            portalCamera.targetTexture = tempTexture1;
-            for (int i = iterations - 1; i >= 0; --i)
+            this.portalCamera.targetTexture = this.tempTexture1;
+            for (int i = this.iterations - 1; i >= 0; --i)
             {
-                RenderCamera(portals[0], portals[1], i, SRC);
+                this.RenderCamera(this.portals[0], this.portals[1], i, SRC);
             }
         }
 
-        if(portals[1].Renderer.isVisible)
+        if(this.portals[1].Renderer.isVisible)
         {
-            portalCamera.targetTexture = tempTexture2;
-            for (int i = iterations - 1; i >= 0; --i)
+            this.portalCamera.targetTexture = this.tempTexture2;
+            for (int i = this.iterations - 1; i >= 0; --i)
             {
-                RenderCamera(portals[1], portals[0], i, SRC);
+                this.RenderCamera(this.portals[1], this.portals[0], i, SRC);
             }
         }
     }
@@ -76,9 +74,9 @@ public class PortalCamera : MonoBehaviour
         Transform inTransform = inPortal.transform;
         Transform outTransform = outPortal.transform;
 
-        Transform cameraTransform = portalCamera.transform;
-        cameraTransform.position = transform.position;
-        cameraTransform.rotation = transform.rotation;
+        Transform cameraTransform = this.portalCamera.transform;
+        cameraTransform.position = this.transform.position;
+        cameraTransform.rotation = this.transform.rotation;
 
         for(int i = 0; i <= iterationID; ++i)
         {
@@ -97,12 +95,13 @@ public class PortalCamera : MonoBehaviour
         Plane p = new Plane(-outTransform.forward, outTransform.position);
         Vector4 clipPlaneWorldSpace = new Vector4(p.normal.x, p.normal.y, p.normal.z, p.distance);
         Vector4 clipPlaneCameraSpace =
-            Matrix4x4.Transpose(Matrix4x4.Inverse(portalCamera.worldToCameraMatrix)) * clipPlaneWorldSpace;
+            Matrix4x4.Transpose(Matrix4x4.Inverse(this.portalCamera.worldToCameraMatrix)) * clipPlaneWorldSpace;
 
-        var newMatrix = mainCamera.CalculateObliqueMatrix(clipPlaneCameraSpace);
-        portalCamera.projectionMatrix = newMatrix;
+        var newMatrix = this.mainCamera.CalculateObliqueMatrix(clipPlaneCameraSpace);
+        this.portalCamera.projectionMatrix = newMatrix;
 
         // Render the camera to its render target.
-        UniversalRenderPipeline.RenderSingleCamera(SRC, portalCamera);
+        UniversalRenderPipeline.RenderSingleCamera(SRC, this.portalCamera);
+        // UniversalRenderPipeline.SubmitRenderRequest(this.portalCamera, new UniversalRenderPipeline.SingleCameraRequest(){});
     }
 }

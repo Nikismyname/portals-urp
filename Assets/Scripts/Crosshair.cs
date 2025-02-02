@@ -16,24 +16,24 @@ public class Crosshair : MonoBehaviour
 
     private void Start()
     {
-        var portals = portalPair.Portals;
+        var portals = this.portalPair.Portals;
 
-        inPortalImg.color = portals[0].PortalColour;
-        outPortalImg.color = portals[1].PortalColour;
+        this.inPortalImg.color = portals[0].PortalColour;
+        this.outPortalImg.color = portals[1].PortalColour;
 
-        inPortalImg.gameObject.SetActive(false);
-        outPortalImg.gameObject.SetActive(false);
+        this.inPortalImg.gameObject.SetActive(false);
+        this.outPortalImg.gameObject.SetActive(false);
     }
 
     public void SetPortalPlaced(int portalID, bool isPlaced)
     {
         if(portalID == 0)
         {
-            inPortalImg.gameObject.SetActive(isPlaced);
+            this.inPortalImg.gameObject.SetActive(isPlaced);
         }
         else
         {
-            outPortalImg.gameObject.SetActive(isPlaced);
+            this.outPortalImg.gameObject.SetActive(isPlaced);
         }
     }
 }
